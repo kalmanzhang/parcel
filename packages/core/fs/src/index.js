@@ -2,7 +2,7 @@
 
 import type {FilePath} from '@parcel/types';
 import type {Readable} from 'stream';
-import type {FSPromise, Stats} from 'fs';
+import type {EncodingOptions, FSPromise, Stats} from 'fs';
 
 import {promisify} from 'util';
 import fs from 'fs';
@@ -29,17 +29,17 @@ export const readdir: $PropertyType<FSPromise, 'readdir'> = promisify(
 export const unlink: $PropertyType<FSPromise, 'unlink'> = promisify(fs.unlink);
 
 const _realpath = promisify(fs.realpath);
-export const realpath: $PropertyType<FSPromise, 'realpath'> = function(
-  originalPath
+export const realpath = async function(
+  originalPath: string,
+  options?: string | EncodingOptions
 ) {
   try {
-    return _realpath(originalPath);
+    return _realpath(originalPath, options);
   } catch (e) {
     // do nothing
   }
 
-  // $FlowFixMe
-  return Promise.resolve(originalPath);
+  return originalPath;
 };
 
 export const lstat: (path: string) => Promise<Stats> = promisify(fs.lstat);
